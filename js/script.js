@@ -2,6 +2,16 @@ const global = {
   currentPage: window.location.pathname
 }
 
+//Highlight active link
+function hightlightALink() {
+  const links = document.querySelectorAll('.nav-link');
+  links.forEach((link) => {
+    if(link.getAttribute('href') === global.currentPage){
+    link.classList.add('active');
+    }
+  });
+}
+
 //Init App
 function init() {
   switch(global.currentPage) {
@@ -21,10 +31,10 @@ function init() {
     case '/search.html':
       console.log('Search');
     break;
-
-
   }
-}
+
+  hightlightALink();
+};
 
 document.addEventListener('DOMContentLoaded', init);
 
