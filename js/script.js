@@ -50,11 +50,23 @@ async function fetchAPIData(endpoint) {
   const API_KEY = '599c0cad2f7853834fdf94a24936062d';
   const API_URL = 'https://api.themoviedb.org/3/';
 
+  showSpin();
+
   const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`);
 
   const data = await response.json();
 
+  hideSpin();
+
   return data;
+}
+
+function showSpin() {
+  document.querySelector('.spinner').classList.add('show');
+}
+
+function hideSpin() {
+  document.querySelector('.spinner').classList.remove('show');
 }
 
 //Init App
