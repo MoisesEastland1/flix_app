@@ -5,6 +5,10 @@ const global = {
     type: '',
     page: 1,
     totalPages: 1
+  },
+  api: {
+    apiKey: '599c0cad2f7853834fdf94a24936062d',
+    apiUrl: 'https://api.themoviedb.org/3/'
   }
 }
 
@@ -279,7 +283,8 @@ async function searchMovieShow() {
   global.search.term = urlParams.get('search-term');
 
     if(global.search.term !== '' && global.search.term !== null) {
-    // @todo - make request and display results
+    const results = await searchAPIData();
+    console.log(results);
   } else {
     showAlert('Please enter a search term');
   }
@@ -337,12 +342,32 @@ function initSwiper() {
 
 //Master fetch function for TMDB API
 async function fetchAPIData(endpoint) {
-  const API_KEY = '599c0cad2f7853834fdf94a24936062d';
-  const API_URL = 'https://api.themoviedb.org/3/';
+  const API_KEY = global.api.apiKey;
+  const API_URL = global.api.apiUrl;
 
   showSpin();
 
   const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`);
+
+  const data = await response.json();
+
+  hideSpin();
+
+  return data;
+}
+
+function showSpin() {
+  document.querySelector('.spinner').classList.add('show');
+}
+
+//Request to Search TMDB API
+async function searchAPIData(endpoint) {
+  const API_KEY = global.api.apiKey;
+  const API_URL = global.api.apiUrl;
+
+  showSpin();
+
+  const response = await fetch(`${API_URL}search/${global.search.type}?api_key=${API_KEY}&language=en-US&query=${global.search.term}`);
 
   const data = await response.json();
 
