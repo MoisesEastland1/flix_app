@@ -283,10 +283,14 @@ async function searchMovieShow() {
   global.search.term = urlParams.get('search-term');
 
     if(global.search.term !== '' && global.search.term !== null) {
-    const results = await searchAPIData();
-    console.log(results);
+    const {results, total_pages, page}  = await searchAPIData();
+    
+      if(results.length === 0) {
+        showAlert();
+      }
+
   } else {
-    showAlert('Please enter a search term');
+    showAlert('Please enter a search term', 'error');
   }
 }
 
