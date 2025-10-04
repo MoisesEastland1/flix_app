@@ -4,7 +4,8 @@ const global = {
     term: '',
     type: '',
     page: 1,
-    totalPages: 1
+    totalPages: 1,
+    totalResults: 0
   },
   api: {
     apiKey: '599c0cad2f7853834fdf94a24936062d',
@@ -198,7 +199,7 @@ async function displayShowDetails() {
 
     : 
     
-    `<img src="..images/noImage.jpg" class="card-img-top"
+    `<img src="../images/no-image.jpg" class="card-img-top"
     alt="${show.name}"/>`
     }
   </div>
@@ -283,15 +284,55 @@ async function searchMovieShow() {
   global.search.term = urlParams.get('search-term');
 
     if(global.search.term !== '' && global.search.term !== null) {
-    const {results, total_pages, page}  = await searchAPIData();
+    const {results, total_pages, page, total_results }  = await searchAPIData();
+
+    global.search.page = page;
     
       if(results.length === 0) {
-        showAlert();
+        showAlert('No results found');
+        return;
       }
 
-  } else {
+      displaySearchResults(results);
+
+      document.querySelector('#search-term').value = '';
+
+    } else {
     showAlert('Please enter a search term', 'error');
   }
+}
+
+// Search Results
+function displaySearchResults(results) {
+  results.forEach((result => {
+    const div = document.createElement('div');
+    div.classList.add('card');
+    div.innerHTML = `
+    
+    <a href="${global.search.type}-details.html?id=${result.id}">
+    ${result.poster_path
+    ? 
+      `<img src="https://image.tmdb.org/t/p/w500${result.poster_path}"
+    class="card-img-top"
+    alt="${global.search.type === 'movie' ? result.title : result.name}"/>`
+
+    : 
+    
+    `<img src="../images/no-image.jpg" class="card-img-top"
+    alt="${global.search.type === 'movie' ? result.title : result.name}"/>`
+    }
+    </a>
+
+    <div class="card-body">
+    <h5 class="card-title">${global.search.type === 'movie' ? result.title : result.name}</h5>
+    <p class="card-text">
+    <small class="text-muted">Release: ${global.search.type === 'movie' ? result.release_date : result.first_air_date}</small>
+    </p>
+    </div>
+    `;
+
+    document.querySelector('#search-results').appendChild(div);
+  }));
 }
 
 // Display Slider Movies
