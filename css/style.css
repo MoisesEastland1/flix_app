@@ -128,6 +128,7 @@ ul {
 
 .card img {
   width: 100%;
+  
 }
 
 .card-body {
@@ -141,6 +142,20 @@ ul {
   background: #0a4b8f;
 }
 
+/*Cast*/
+.cast {
+  background: #04376b;
+  padding: 5px;
+}
+.cast img {
+  width: auto;
+  height: auto;
+}
+
+.cast-body {
+  padding: 10px;
+  font-size: 15px;
+}
 /* Footer */
 .main-footer {
   background: #020d18;
@@ -238,8 +253,7 @@ section h2 {
   margin-top: 20px;
 }
 
-.details-bottom {
-}
+
 
 .details-bottom li {
   margin: 15px 0;
