@@ -249,12 +249,160 @@ async function displayShowDetails() {
 
     //Overlay for background image
   displayBackgroundImage('tv', show.backdrop_path);
+
+}
+
+//* Display Movie Cast Details 
+async function displayMovieCast() {
+  const castID = window.location.search.split('=')[1];
+
+  const moviecast = await fetchAPIData(`movie/${castID}/credits`);
+  // TMDB returns an object with a `cast` array: { id, cast: [...], crew: [...] }
+  const credits = moviecast;
+
+  // Safely get the array of cast members
+  const castArray = credits?.cast ?? [];
+
+  if (castArray.length === 0) {
+    // nothing to render
+    return;
+  }
+
+  // Create a container for cast cards
+  const container = document.createElement('div');
+  container.classList.add('cast-container', 'list-group');
+
+  // Limit how many cast members to show (e.g., first 8)
+  const maxToShow = 8;
+
+  castArray.slice(0, maxToShow).forEach((member) => {
+    const cast = document.createElement('div');
+    cast.classList.add('cast');
+
+    cast.innerHTML = `
+
+  <a href="tv-details.html?id=${member.id}">
+    ${member.profile_path
+    ? 
+      `<img src="https://image.tmdb.org/t/p/w200${member.profile_path}"
+    class="cast-img-top"
+    alt="${member.name}"/>`
+
+    : 
+    
+    `<img src="..images/noImage.jpg" class="cast-img-top"
+    alt="${member.name}"/>`
+    }
+    </a>
+
+    <div class="cast-body">
+    <h5 class="cast-title">${member.name}</h5>
+    <p class="cast-text">
+    <small class="text-muted">Character: ${member.character}</small>
+    </p>
+    </div>
+
+    `;
+
+    container.style.display = 'flex';
+    container.style.flexDirection= 'row';
+    container.style.gap = '5px';
+    container.style.alignItems = 'end';
+    container.style.alignContent = 'center';
+    container.style.justifyContent = 'center';
+
+    container.appendChild(cast);
+  });
+
+
+  // Append to movie details
+  const movieDetailsEl = document.querySelector('#movie-details');
+  const header = document.createElement('h3');
+    header.textContent = 'Cast';
+    movieDetailsEl.appendChild(header);
+    movieDetailsEl.appendChild(container);
 }
 
 
-// Display backdrop on detail pages
-function displayBackgroundImage
-(type, backgroundPath) {
+async function displaySeriesCast() {
+  const castID = window.location.search.split('=')[1];
+
+  const seriescast = await fetchAPIData(`tv/${castID}/credits`);
+  // TMDB returns an object with a `cast` array: { id, cast: [...], crew: [...] }
+  const credits = seriescast;
+
+  // Safely get the array of cast members
+  const castArray = credits?.cast ?? [];
+
+  if (castArray.length === 0) {
+    // nothing to render
+    return;
+  }
+
+  // Create a container for cast cards
+  const container = document.createElement('div');
+  container.classList.add('cast-container', 'list-group');
+
+  // Limit how many cast members to show (e.g., first 8)
+  const maxToShow = 8;
+
+  castArray.slice(0, maxToShow).forEach((member) => {
+    const cast = document.createElement('div');
+    cast.classList.add('cast');
+
+    cast.innerHTML = `
+
+
+  <a href="tv-details.html?id=${member.id}">
+    ${member.profile_path
+    ? 
+      `<img src="https://image.tmdb.org/t/p/w200${member.profile_path}"
+    class="cast-img-top"
+    alt="${member.name}"/>`
+
+    : 
+    
+    `<img src="..images/noImage.jpg" class="cast-img-top"
+    alt="${member.name}"/>`
+    }
+    </a>
+
+    <div class="cast-body">
+    <h5 class="cast-title">${member.name}</h5>
+    <p class="cast-text">
+    <small class="text-muted">Character: ${member.character}</small>
+    </p>
+    </div>
+
+    `;
+
+    container.style.display = 'flex';
+    container.style.flexDirection= 'row';
+    container.style.gap = '5px';
+    container.style.alignItems = 'end';
+    container.style.alignContent = 'center';
+    container.style.justifyContent = 'center';
+
+
+    
+    container.appendChild(cast);
+
+    
+  });
+
+  
+  // Append to show details 
+  const showDetailsEl = document.querySelector('#show-details');
+  const header = document.createElement('h3');
+    header.textContent = 'Cast';
+    showDetailsEl.appendChild(header);
+    showDetailsEl.appendChild(container);
+
+}
+
+
+ //Display backdrop on detail pages
+function displayBackgroundImage(type, backgroundPath) {
   const overLayDiv = document.createElement('div');
   overLayDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original/${backgroundPath})`;
   overLayDiv.style.backgroundSize = 'cover';
@@ -494,9 +642,11 @@ function init() {
     break;
     case '/movie-details.html':
       displayMovieDetails();
+      displayMovieCast();
     break;
     case '/tv-details.html':
       displayShowDetails();
+      displaySeriesCast();
     break;
     case '/search.html':
       searchMovieShow();
